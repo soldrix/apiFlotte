@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,13 +14,13 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/register', 'AuthController@register');
-Route::post('/login', 'AuthController@login');
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', 'AuthController@logout');
-    Route::post('/user/edit/name', 'AuthController@updateName');
-    Route::post('/user/edit/email', 'AuthController@updateEmail');
-    Route::post('/user/edit/password', 'AuthController@updatePassword');
-    Route::post('/user/delete', 'AuthController@delete');
-    Route::get('/user','AuthController@getUser');
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/user/edit/name', [UserController::class, 'updateName']);
+    Route::post('/user/edit/email', [UserController::class, 'updateEmail']);
+    Route::post('/user/edit/password', [UserController::class, 'updatePassword']);
+    Route::post('/user/delete', [UserController::class, 'delete']);
+    Route::get('/user',[UserController::class, 'getUser']);
 });

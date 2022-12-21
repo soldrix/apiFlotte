@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AgenceController;
+use App\Http\Controllers\VoitureController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,4 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/agence/create',[AgenceController::class , 'store']);
     Route::post('/agence/update',[AgenceController::class , 'update']);
     Route::delete('/agence/delete/{id}',[AgenceController::class , 'destroy']);
+
+    Route::post('/voiture/create', [VoitureController::class, 'store']);
+    Route::get('/voiture/{id}', [VoitureController::class, 'show'])->where('path', '.*');
+    Route::get('/voitures',[VoitureController::class, 'index']);
 });

@@ -85,12 +85,54 @@ class VoitureController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request):JsonResponse
     {
-        //
+        $todayDate = date('m/d/Y');
+        $validator =Validator::make($request->all(),[
+            "id" => "required",
+            "marque" => "required",
+            "model"  => "required",
+            "image" => ["image","mimes:jpg,png,jpeg,gif,svg","max:2048","dimensions:min_width=100,min_height=100,max_width=1000,max_height=1000"],
+            "carburant" => ["required"],
+            "circulation" => ["required",'date_format:Y-m-d','after_or_equal:'.$todayDate],
+            "immatriculation" => "required",
+            "puissance" => ["required", "integer"],
+            "type" => "required",
+            "nbPorte" => ["required", "integer"],
+            "nbPlace" => ["required", "integer"],
+            "prix" => ["required", "numeric"],
+            "statut" => ["required", "integer", "max_digits:1"]
+        ]);
+        if($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        $voiture = voiture::find($request->id);
+
+        if ($request->image === null){
+            $path = $voiture->image;
+        }else{
+            Storage::delete($voiture->image);
+            $path =  Storage::putFile('image', $request->image);
+        }
+
+        $voiture->update([
+            "image" => $path,
+            "marque" => $request->marque,
+            "model" => $request->model,
+            "carburant" => $request->carburant,
+            "circulation" => $request->circulation,
+            "immatriculation" => $request->immatriculation,
+            "puissance" => $request->puissance,
+            "type" => $request->type,
+            "nbPorte" => $request->nbPorte,
+            "nbPlace" => $request->nbPlace,
+            "prix" => $request->prix,
+            "statut" => $request->statut,
+            "id_agence" => ($request->id_agence !== null) ? $request->id_agence : null
+        ]);
+        return response()->json([
+            'voiture' => $voiture
+        ]);
     }
 
     /**

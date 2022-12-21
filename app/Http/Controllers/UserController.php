@@ -69,11 +69,11 @@ class UserController extends Controller
             "old_password" => "required",
             "new_password" => "required|confirmed"
         ],
-            [
-                "old_password.required" => "Le mot de passe est requis.",
-                "new_password.required" => "Le nouveau mot de passe est requis.",
-                "confirmed" => "La confirmation du nouveau mot de passe ne correspond pas."
-            ]);
+        [
+            "old_password.required" => "Le mot de passe est requis.",
+            "new_password.required" => "Le nouveau mot de passe est requis.",
+            "confirmed" => "La confirmation du nouveau mot de passe ne correspond pas."
+        ]);
         if ($validator->fails()) {
             return response()->json([
                 'error' => $validator->errors()
@@ -95,6 +95,8 @@ class UserController extends Controller
         User::where('id', Auth::user()->id)->delete();
     }
     public function getUser(Request $request){
-        
+        return response()->json([
+            "user" => User::where('id', $request->id)->get()
+        ]);
     }
 }

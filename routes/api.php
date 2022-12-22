@@ -36,4 +36,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/voiture/{id}', [VoitureController::class, 'show'])->where('path', '.*');
     Route::get('/voitures',[VoitureController::class, 'index']);
     Route::post('/voiture/update',[VoitureController::class, 'update']);
+    Route::delete('/voiture/delete/{id}',[VoitureController::class, 'destroy']);
 });

@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\VoitureController;
+use App\Http\Controllers\AssuranceController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/delete', [UserController::class, 'delete']);
     Route::get('/user',[UserController::class, 'getUser']);
 
-    Route::get('/agence/all',[AgenceController::class , 'index']);
+    Route::get('/agences',[AgenceController::class , 'index']);
     Route::get('/agence/{id}',[AgenceController::class , 'show']);
     Route::post('/agence/create',[AgenceController::class , 'store']);
     Route::post('/agence/update',[AgenceController::class , 'update']);
@@ -37,4 +38,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/voitures',[VoitureController::class, 'index']);
     Route::post('/voiture/update',[VoitureController::class, 'update']);
     Route::delete('/voiture/delete/{id}',[VoitureController::class, 'destroy']);
+
+    Route::post('/assurance/create',[AssuranceController::class, 'store']);
+    Route::get('/assurances', [AssuranceController::class, "index"]);
+    Route::get('/assurance/{id}', [AssuranceController::class, "show"]);
+    Route::post('/assurance/update', [AssuranceController::class, "update"]);
+    Route::delete('/assurance/delete/{id}',[AssuranceController::class, 'destroy']);
 });

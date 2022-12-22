@@ -10,6 +10,7 @@ use App\Http\Controllers\AssuranceController;
 use App\Http\Controllers\ConsommationController;
 use App\Http\Controllers\EntretienController;
 use App\Http\Controllers\ReparationController;
+use App\Http\Controllers\LocationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -65,4 +66,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reparation/{id}', [ReparationController::class, "show"]);
     Route::post('/reparation/update', [ReparationController::class, "update"]);
     Route::delete('/reparation/delete/{id}',[ReparationController::class, 'destroy']);
+
+    Route::post('/location/create',[LocationController::class, 'store']);
+    Route::get('/locations', [LocationController::class, "index"]);
+    Route::get('/location/{id}', [LocationController::class, "show"]);
+    Route::post('/location/update', [LocationController::class, "update"]);
+    Route::delete('/location/delete/{id}',[LocationController::class, 'destroy']);
 });

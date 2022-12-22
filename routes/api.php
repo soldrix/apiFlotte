@@ -8,6 +8,7 @@ use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\VoitureController;
 use App\Http\Controllers\AssuranceController;
 use App\Http\Controllers\ConsommationController;
+use App\Http\Controllers\EntretienController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -51,4 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/consommation/{id}', [ConsommationController::class, "show"]);
     Route::post('/consommation/update', [ConsommationController::class, "update"]);
     Route::delete('/consommation/delete/{id}',[ConsommationController::class, 'destroy']);
+
+    Route::post('/entretien/create',[EntretienController::class, 'store']);
+    Route::get('/entretiens', [EntretienController::class, "index"]);
+    Route::get('/entretien/{id}', [EntretienController::class, "show"]);
+    Route::post('/entretien/update', [EntretienController::class, "update"]);
+    Route::delete('/entretien/delete/{id}',[EntretienController::class, 'destroy']);
 });

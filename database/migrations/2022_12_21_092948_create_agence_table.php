@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('ville',50);
             $table->string('rue',100);
+            $table->string('codePostal',100);
             $table->timestamps();
         });
     }

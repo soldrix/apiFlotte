@@ -21,7 +21,6 @@ class voiture extends Model
         "puissance",
         "circulation",
         "carburant",
-        "puissance",
         "type",
         "nbPorte",
         "nbPlace",

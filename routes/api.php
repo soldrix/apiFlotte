@@ -23,13 +23,16 @@ use App\Http\Controllers\LocationController;
 */
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/image/{path}', [VoitureController::class, 'getImage'])->where('path', '.*');
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/user/edit/name', [UserController::class, 'updateName']);
     Route::post('/user/edit/email', [UserController::class, 'updateEmail']);
     Route::post('/user/edit/password', [UserController::class, 'updatePassword']);
-    Route::post('/user/delete', [UserController::class, 'delete']);
-    Route::get('/user',[UserController::class, 'getUser']);
+    Route::delete('/user/delete/{id}', [UserController::class, 'delete']);
+    Route::get('/user/{id}',[UserController::class, 'getUser']);
+    Route::get('/users',[UserController::class, 'index']);
 
     Route::get('/agences',[AgenceController::class , 'index']);
     Route::get('/agence/{id}',[AgenceController::class , 'show']);

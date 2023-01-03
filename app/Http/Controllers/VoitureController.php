@@ -89,47 +89,24 @@ class VoitureController extends Controller
      */
     public function update(Request $request):JsonResponse
     {
-        $todayDate = date('m/d/Y');
         $validator =Validator::make($request->all(),[
             "id" => "required",
-            "marque" => "required",
-            "model"  => "required",
             "image" => ["image","mimes:jpg,png,jpeg,gif,svg","max:2048","dimensions:min_width=100,min_height=100,max_width=1000,max_height=1000"],
-            "carburant" => ["required"],
-            "circulation" => ["required",'date_format:Y-m-d','after_or_equal:'.$todayDate],
-            "immatriculation" => "required",
-            "puissance" => ["required", "integer"],
-            "type" => "required",
-            "nbPorte" => ["required", "integer"],
-            "nbPlace" => ["required", "integer"],
-            "prix" => ["required", "numeric"],
-            "statut" => ["required", "integer", "max_digits:1"]
+            "circulation" => ['date_format:Y-m-d'],
+            "puissance" => ["integer"],
+            "prix" => ["numeric"],
+            "statut" => ["integer", "max_digits:1"]
         ]);
         if($validator->fails()) return response()->json(["error" => $validator->errors()]);
         $voiture = voiture::find($request->id);
-
-        if ($request->image === null){
-            $path = $voiture->image;
-        }else{
+        if ($request->image !== null){
             Storage::delete($voiture->image);
             $path =  Storage::putFile('image', $request->image);
+            unset($request->image);
+            $voiture->update(array_merge($request->all(), ['image' => $path]));
+        }else{
+            $voiture->update($request->all());
         }
-
-        $voiture->update([
-            "image" => $path,
-            "marque" => $request->marque,
-            "model" => $request->model,
-            "carburant" => $request->carburant,
-            "circulation" => $request->circulation,
-            "immatriculation" => $request->immatriculation,
-            "puissance" => $request->puissance,
-            "type" => $request->type,
-            "nbPorte" => $request->nbPorte,
-            "nbPlace" => $request->nbPlace,
-            "prix" => $request->prix,
-            "statut" => $request->statut,
-            "id_agence" => ($request->id_agence !== null) ? $request->id_agence : null
-        ]);
         return response()->json([
             'voiture' => $voiture
         ]);
@@ -147,5 +124,10 @@ class VoitureController extends Controller
         Storage::delete($voiture->image);
         $voiture->delete();
         return response("La voiture à été supprimé avec succès.");
+    }
+    public function getImage($path)
+    {
+        $image = Storage::get($path);
+        return response($image, 200)->header('Content-Type', Storage::mimeType($path));
     }
 }

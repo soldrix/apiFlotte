@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -69,11 +70,11 @@ class UserController extends Controller
             "old_password" => "required",
             "new_password" => "required|confirmed"
         ],
-            [
-                "old_password.required" => "Le mot de passe est requis.",
-                "new_password.required" => "Le nouveau mot de passe est requis.",
-                "confirmed" => "La confirmation du nouveau mot de passe ne correspond pas."
-            ]);
+        [
+            "old_password.required" => "Le mot de passe est requis.",
+            "new_password.required" => "Le nouveau mot de passe est requis.",
+            "confirmed" => "La confirmation du nouveau mot de passe ne correspond pas."
+        ]);
         if ($validator->fails()) {
             return response()->json([
                 'error' => $validator->errors()
@@ -91,10 +92,19 @@ class UserController extends Controller
             "message" => "Mot de passe incorrect."
         ]);
     }
-    public function delete(){
-        User::where('id', Auth::user()->id)->delete();
+    public function delete($id)
+    {
+        User::where('id', $id)->delete();
+       return response("L'utilisateur a été supprimer avec succès.");
     }
-    public function getUser(Request $request){
-        
+    public function getUser($id){
+        return response()->json([
+            "user" => User::where('id', $id)->get()
+        ]);
+    }
+
+    public function index(){
+        $user = User::all();
+        return response($user);
     }
 }

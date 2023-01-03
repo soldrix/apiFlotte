@@ -18,11 +18,12 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users|max:255',
-            'password' => 'required|min:10',
+            'password' => 'required|min:10|confirmed',
         ],
         [
             'required' => 'Le champ :attribute est requis.',
-            'unique' => "Cette  addresse email a un compte éxistant."
+            'unique' => "Cette  addresse email a un compte éxistant.",
+            'password.confirmed' => "Le mot de passe de confirmation ne correspond pas."
         ]);
 
         // Return errors if validation error occur.

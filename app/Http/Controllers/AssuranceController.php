@@ -17,7 +17,9 @@ class AssuranceController extends Controller
     public function index()
     {
         $assurance = assurance::all();
-        return response($assurance);
+        return response([
+            "data" => $assurance
+        ]);
     }
 
 
@@ -41,7 +43,7 @@ class AssuranceController extends Controller
             "DateFin.after" => "La date de Fin doit être plus grande que la date de debut.",
             "frais.numeric" => "Le montant des frais doivent être des chiffre ex: ( 10.50 ) ."
         ]);
-        if($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $assurance = assurance::create([
             "nom" => $request->nom,
             "DateDebut" => $request->DateDebut,
@@ -78,10 +80,9 @@ class AssuranceController extends Controller
     {
         $validator = Validator::make($request->all(),[
             "id" => "required",
-            "nom" => "required",
-            "DateDebut" => ["required","after_or_equal:2000-01-01"],
-            "DateFin" => ["required",'after:'.$request->DateDebut],
-            "frais" => ["required","numeric"]
+            "DateDebut" => ["after_or_equal:2000-01-01"],
+            "DateFin" => ['after:'.$request->DateDebut,($request->DateDebut) ? 'required' : ''],
+            "frais" => ["numeric"]
         ],
         [
             "required" => "le champ est requis.",
@@ -89,15 +90,12 @@ class AssuranceController extends Controller
             "DateFin.after" => "La date de Fin doit être plus grande que la date de debut.",
             "frais.numeric" => "Le montant des frais doivent être des chiffre ex: ( 10.50 ) ."
         ]);
-        if($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $assurance = assurance::find($request->id);
-        $assurance->update([
-            "nom" => $request->nom,
-            "DateDebut" => $request->DateDebut,
-            "DateFin" => $request->DateFin,
-            "frais" => $request->frais,
-            "id_voiture" => ($request->id_voiture === null) ? null : $request->id_voiture
-        ]);
+        if($request->id_voiture){
+            $request['id_voiture'] = ($request->id_voiture === null) ? null : $request->id_voiture;
+        }
+        $assurance->update($request->all());
         return response()->json([
             "assurance" => $request->all()
         ]);

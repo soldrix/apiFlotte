@@ -17,7 +17,9 @@ class ConsommationController extends Controller
     public function index()
     {
         $consommation = consommation::all();
-        return response($consommation);
+        return response([
+            "data" => $consommation
+        ]);
     }
 
 
@@ -33,7 +35,7 @@ class ConsommationController extends Controller
             "litre" => ["required","numeric"],
             "montant" => ["required","numeric"]
         ]);
-        if ($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if ($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $consommation = consommation::create([
             "litre" => $request->litre,
             "montant" => $request->montant,
@@ -69,16 +71,13 @@ class ConsommationController extends Controller
     {
         $validator = Validator::make($request->all(),[
             "id" => "required",
-            "litre" => ["required","numeric"],
-            "montant" => ["required","numeric"]
+            "litre" => ["numeric"],
+            "montant" => ["numeric"]
         ]);
-        if ($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if ($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $consommation = consommation::find($request->id);
-        $consommation->update([
-            "litre" => $request->litre,
-            "montant" => $request->montant,
-            "id_voiture" => ($request->id_voiture === null) ? null : $request->id_voiture
-        ]);
+        if($request->id_voiture) $request['id_voiture'] = $request->id_voiture ?? null;
+        $consommation->update($request->all());
         return response()->json([
             "consommation" => $request->all()
         ]);

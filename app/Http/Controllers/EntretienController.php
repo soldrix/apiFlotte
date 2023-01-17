@@ -40,7 +40,7 @@ class EntretienController extends Controller
             "date.after" => "La date doit être valide et être après 01/01/2000.",
             "numeric" => "Le montant doit être un chiffre ex: ( 10.50)."
         ]);
-        if ($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if ($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $entretien = entretien::create([
             "nom" => $request->nom,
             "type" => $request->type,
@@ -79,27 +79,23 @@ class EntretienController extends Controller
     {
         $validator = Validator::make($request->all(),[
             "id" => "required",
-            "nom" => "required",
-            "type" => "required",
-            "date" => ["required","after:2000-01-01"],
-            "note" => "required",
-            "montant" => ["required","numeric"]
+            "date" => ["after:2000-01-01"],
+            "montant" => ["numeric"]
         ],
         [
             "required" => "Le champ est requis.",
             "date.after" => "La date doit être valide et être après 01/01/2000.",
             "numeric" => "Le montant doit être un chiffre ex: ( 10.50)."
         ]);
-        if ($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if ($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $entretien = entretien::find($request->id);
-        $entretien->update([
-            "nom" => $request->nom,
-            "type" => $request->type,
-            "date" => $request->date,
-            "montant" => $request->montant,
-            "note" => $request->note,
-            "id_voiture" => ($request->id_voiture === null) ? null : $request
-        ]);
+        if ($request->note){
+            $request['note'] = ($request->note === null) ? 'Aucune note.' : $request->note;
+        }
+        if ($request->id_voiture){
+            $request['id_voiture'] =  ($request->id_voiture === null) ? null : $request->id_voiture;
+        }
+        $entretien->update($request->all());
         return response()->json([
             "entretien" => $request->all()
         ]);

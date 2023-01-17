@@ -36,7 +36,7 @@ class AgenceController extends Controller
             "rue" => "required",
             "codePostal" => "required"
         ]);
-        if ($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if ($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $agence = agence::create([
             "ville" => $request->ville,
             "rue" => $request->rue,
@@ -72,10 +72,9 @@ class AgenceController extends Controller
     public function update(Request $request):JsonResponse
     {
         $validator = Validator::make($request->all(),[
-            "ville" => "required",
-            "rue" => "required"
+            'id' => "required"
         ]);
-        if ($validator->fails()) return response()->json(['error' => $validator->errors()]);
+        if ($validator->fails()) return response()->json(['error' => $validator->errors()],400);
         $agence = agence::find($request->id);
         $agence->update($request->all());
         return response()->json(["agance" => $request->all()]);

@@ -46,7 +46,7 @@ class VoitureController extends Controller
             "prix" => ["required", "numeric"],
             "statut" => ["required", "integer", "max_digits:1"]
         ]);
-        if($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if($validator->fails()) return response()->json(["error" => $validator->errors()],400);
 
         $path = Storage::putFile('image', $request->image);
         $voiture = voiture::create([
@@ -97,7 +97,7 @@ class VoitureController extends Controller
             "prix" => ["numeric"],
             "statut" => ["integer", "max_digits:1"]
         ]);
-        if($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $voiture = voiture::find($request->id);
         if ($request->image !== null){
             Storage::delete($voiture->image);

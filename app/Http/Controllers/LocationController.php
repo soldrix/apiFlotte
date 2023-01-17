@@ -18,7 +18,9 @@ class LocationController extends Controller
     public function index()
     {
         $locations = location::all();
-        return response($locations);
+        return response([
+            "data" => $locations
+        ]);
     }
 
     /**
@@ -34,7 +36,7 @@ class LocationController extends Controller
             "DateFin" => ["required", "after_or_equal:".$request->DateDebut],
             "montant" => ["required", "numeric"]
         ]);
-        if ($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if ($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $location  = location::create([
             "DateDebut" => $request->DateDebut,
             "DateFin" => $request->DateFin,
@@ -72,19 +74,14 @@ class LocationController extends Controller
     {
         $validator = Validator::make($request->all(),[
             "id" => "required",
-            "DateDebut"  => ["required","after:2000-01-01"],
-            "DateFin" => ["required", "after_or_equal:".$request->DateDebut],
-            "montant" => ["required", "numeric"]
+            "DateDebut"  => ["after:2000-01-01"],
+            "DateFin" => ["after_or_equal:".$request->DateDebut,($request->DateDebut) ? "required" : ""],
+            "montant" => ["numeric"]
         ]);
-        if ($validator->fails()) return response()->json(["error" => $validator->errors()]);
+        if ($validator->fails()) return response()->json(["error" => $validator->errors()],400);
         $location = location::find($request->id);
-        $location->update([
-            "DateDebut" => $request->DateDebut,
-            "DateFin" => $request->DateFin,
-            "montant" => $request->montant,
-            "id_voiture" => ($request->id_voiture === null) ? null : $request->id_voiture,
-            "id_users"  => Auth::id()
-        ]);
+        if($request->id_voiture) $request['id_voiture'] = ($request->id_voiture === null) ? null : $request->id_voiture;
+        $location->update(array_merge($request->all(),["id_users"  => Auth::id()]));
         return response()->json([
             "location" => $location
         ]);
